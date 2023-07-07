@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "954481990058",
+    "project_id": "mob403asm-12668",
+    "storage_bucket": "mob403asm-12668.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:954481990058:android:115bf6ee9055ffe3d7b3d3",
+        "android_client_info": {
+          "package_name": "com.example.asm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "954481990058-pvgtapa0d7unhvrpabuva3bn1q16fdsu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCg7uTyS-e5nlahnQOQbOrOHW7AKyuRpOo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "954481990058-pvgtapa0d7unhvrpabuva3bn1q16fdsu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

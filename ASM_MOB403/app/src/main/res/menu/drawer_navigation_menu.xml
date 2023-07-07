@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_item1"
+        android:icon="@drawable/ic_info"
+        android:title="Thông tin tài khoản" />
+    <item
+        android:icon="@drawable/ic_username"
+        android:id="@+id/nav_item2"
+        android:title="Đổi Username" />
+    <item
+        android:icon="@drawable/ic_password"
+        android:id="@+id/nav_item3"
+        android:title="Đổi Password" />
+    <item
+        android:icon="@drawable/ic_quests"
+        android:id="@+id/nav_item4"
+        android:title="Đổi Quests" />
+    <item
+        android:title="____________________________________" />
+    <item
+        android:icon="@drawable/ic_logout"
+        android:id="@+id/nav_item5"
+        android:title="Đăng xuất" />
+
+</menu>

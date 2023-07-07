@@ -1,0 +1,4 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FFFFFF" /> <!-- Màu nền của ảnh -->
+    <corners android:radius="20dp" /> <!-- Độ cong góc (ở đây là 100dp để làm cho ảnh tròn) -->
+</shape>
