@@ -25,10 +25,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.example.asm.MainScreen.MainScreen;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.API.addproduct_api;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.API.homeitem;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Adapter.HomeAdapter;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Model.Products;
+import com.example.asm.MainScreen.ScreenFragment_DrawerNav.API.getinfo_api;
+import com.example.asm.MainScreen.ScreenFragment_DrawerNav.Model.UserProfile;
 import com.example.asm.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -72,8 +76,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String userId = sharedPreferences.getString("userId", "");
+
 
     }
 
@@ -83,6 +86,8 @@ public class HomeFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
         getProductsFromApi();
         FloatingActionButton floatingActionButton = v.findViewById(R.id.addproduct);
+        MainScreen mainScreen = (MainScreen) getActivity();
+
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
         recyclerView = v.findViewById(R.id.ao);
@@ -304,6 +309,7 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
