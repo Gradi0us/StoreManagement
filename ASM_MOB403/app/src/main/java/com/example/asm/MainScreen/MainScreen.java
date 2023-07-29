@@ -5,10 +5,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,10 +34,16 @@ import com.example.asm.MainScreen.ScreenFragment_DrawerNav.Change_quests;
 import com.example.asm.MainScreen.ScreenFragment_DrawerNav.Change_username;
 import com.example.asm.MainScreen.ScreenFragment_DrawerNav.Model.UserProfile;
 import com.example.asm.R;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,25 +56,26 @@ public class MainScreen extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     public String userId;
-   Toolbar toolbar;
-   TextView txt_name;
-   ImageView img_avatar;
-   public String ìd;
+    Toolbar toolbar;
+    TextView txt_name;
+    ImageView img_avatar;
+    public String ìd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
 
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-         userId = sharedPreferences.getString("userId", "");
+        userId = sharedPreferences.getString("userId", "");
 
-checkinfo(userId);
-       toolbar = findViewById(R.id.toolbar);
+        checkinfo(userId);
+        toolbar = findViewById(R.id.toolbar);
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
-txt_name = findViewById(R.id.txt_name);
-img_avatar = findViewById(R.id.img_avatar);
+        txt_name = findViewById(R.id.txt_name);
+        img_avatar = findViewById(R.id.img_avatar);
         drawerToggle = new ActionBarDrawerToggle(
                 this,
                 drawerLayout,
@@ -148,6 +163,7 @@ img_avatar = findViewById(R.id.img_avatar);
                 .replace(R.id.fragment_container, new HomeFragment())
                 .commit();
     }
+
     private void checkinfo(String id) {
         getinfo_api.api.getInfoUser(id).enqueue(new Callback<List<UserProfile>>() {
             @Override
@@ -159,9 +175,7 @@ img_avatar = findViewById(R.id.img_avatar);
                     String avatar = userProfile.getAvatar();
 
                     txt_name.setText(name);
-                    // Vì txt_phone là TextView, cần chuyển phone (kiểu int) thành String để setText.
 
-                    // Sử dụng Glide để hiển thị ảnh từ link avatar vào ImageView holder.productimgview
                     Glide.with(MainScreen.this)
                             .load(avatar) // Link avatar
                             .placeholder(R.drawable.ic_history) // Ảnh placeholder hiển thị khi chờ tải ảnh
@@ -170,7 +184,7 @@ img_avatar = findViewById(R.id.img_avatar);
                     Toast.makeText(MainScreen.this, "profile is existed _Uploaded", Toast.LENGTH_SHORT).show();
                 } else {
                     // User profile data is not available, show the dialog to add new information.
-                    Toast.makeText(MainScreen.this, "NO", Toast.LENGTH_SHORT).show();
+                    showAddProductDialog();
                 }
             }
 
@@ -182,6 +196,49 @@ img_avatar = findViewById(R.id.img_avatar);
         });
     }
 
+
+
+            private void showAddProductDialog() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainScreen.this);
+//                LayoutInflater inflater = getLayoutInflater();
+//                View dialogView = inflater.inflate(R.layout.dialog_addprofile, null);
+                builder.setTitle("Chưa có thông tin của Proflie hãy cập nhật ");
+//                builder.setView(dialogView);
+
+
+                builder.setPositiveButton("Thêm profle", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Account_info accountInfoFragment = new Account_info();
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container, accountInfoFragment);
+                        transaction.addToBackStack(null); // Để có thể quay lại fragment trước đó nếu cần
+                        transaction.commit();
+
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+
+
+
+
+public void navigationback(Fragment fragment){
+    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    transaction.replace(R.id.fragment_container, fragment);
+    transaction.addToBackStack(null); // Để có thể quay lại fragment trước đó nếu cần
+    transaction.commit();
+}
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (drawerToggle.onOptionsItemSelected(item)) {

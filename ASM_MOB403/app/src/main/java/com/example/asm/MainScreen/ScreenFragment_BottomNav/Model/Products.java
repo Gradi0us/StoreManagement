@@ -1,6 +1,6 @@
 package com.example.asm.MainScreen.ScreenFragment_BottomNav.Model;
-
-public class Products {
+import java.io.Serializable;
+public class Products implements Serializable {
     String id;
     String productname;
     String producttype;

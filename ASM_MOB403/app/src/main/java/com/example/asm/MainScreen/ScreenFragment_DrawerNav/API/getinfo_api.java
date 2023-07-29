@@ -16,7 +16,7 @@ import retrofit2.http.POST;
 
 public interface getinfo_api {
 
-        Gson gson = new GsonBuilder().setLenient().create();
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 
         getinfo_api api = new Retrofit.Builder()
                 .baseUrl("https://testh0stmysql.000webhostapp.com/")

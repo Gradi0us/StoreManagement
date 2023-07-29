@@ -12,18 +12,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Model.Products;
+import com.example.asm.MainScreen.ScreenFragment_BottomNav.Interface_RecycleView.OnProductItemClickListener;
 import com.example.asm.R;
 
 import java.util.List;
 
 public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
+
     private Context context;
     private List<Products> productList;
-
-    public HomeAdapter(Context context, List<Products> productList) {
+    private OnProductItemClickListener productItemClickListener;
+    public HomeAdapter(Context context, List<Products> productList, OnProductItemClickListener itemClickListener) {
         this.context = context;
         this.productList = productList;
-
+        this.productItemClickListener = itemClickListener;
     }
 
     @NonNull
@@ -43,6 +45,15 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
                 .placeholder(R.drawable.ic_history) // Ảnh placeholder hiển thị khi chờ tải ảnh
                 .error(R.drawable.ic_history) // Ảnh hiển thị khi lỗi tải ảnh
                 .into(holder.productimgview);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Gọi phương thức onProductItemClick của Interface khi click vào item
+                if (productItemClickListener != null) {
+                    productItemClickListener.onProductItemClick(product);
+                }
+            }
+        });
     }
 
     @Override

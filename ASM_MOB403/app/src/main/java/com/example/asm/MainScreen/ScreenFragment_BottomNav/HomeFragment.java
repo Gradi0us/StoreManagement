@@ -3,12 +3,10 @@ package com.example.asm.MainScreen.ScreenFragment_BottomNav;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -25,14 +22,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.example.asm.MainScreen.MainScreen;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.API.addproduct_api;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.API.homeitem;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Adapter.HomeAdapter;
+import com.example.asm.MainScreen.ScreenFragment_BottomNav.Fragment_Detail.ProductDetailFragment;
+import com.example.asm.MainScreen.ScreenFragment_BottomNav.Interface_RecycleView.OnProductItemClickListener;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Model.Products;
-import com.example.asm.MainScreen.ScreenFragment_DrawerNav.API.getinfo_api;
-import com.example.asm.MainScreen.ScreenFragment_DrawerNav.Model.UserProfile;
 import com.example.asm.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -59,7 +54,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements OnProductItemClickListener {
+
 
     private static final int REQUESTS_CODE_FOLDER = 123;
     private static final int RESULT_OK = -1;
@@ -72,7 +68,10 @@ public class HomeFragment extends Fragment {
     List<Products> aoList = new ArrayList<>();
     List<Products> quanList = new ArrayList<>();
     List<Products> muList = new ArrayList<>();
-    HomeAdapter adapter = new HomeAdapter(getActivity(), productList);
+    HomeAdapter adapter = new HomeAdapter(getContext(), productList,this);
+    HomeAdapter aoAdapter = new HomeAdapter(getContext(), aoList,this);
+    HomeAdapter quanAdapter = new HomeAdapter(getContext(), quanList,this);
+    HomeAdapter muAdapter = new HomeAdapter(getContext(), muList,this);
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,9 +83,10 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
+
         getProductsFromApi();
         FloatingActionButton floatingActionButton = v.findViewById(R.id.addproduct);
-        MainScreen mainScreen = (MainScreen) getActivity();
+
 
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
@@ -151,17 +151,17 @@ public class HomeFragment extends Fragment {
                             muList.add(product);
                         }
 
-                        HomeAdapter aoAdapter = new HomeAdapter(getActivity(), aoList);
+
                         LinearLayoutManager manager1 = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false);
                         recyclerView.setLayoutManager(manager1);
                         recyclerView.setAdapter(aoAdapter);
 
-                        HomeAdapter quanAdapter = new HomeAdapter(getActivity(), quanList);
+
                         LinearLayoutManager manager2 = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false);
                         recyclerView1.setLayoutManager(manager2);
                         recyclerView1.setAdapter(quanAdapter);
 
-                        HomeAdapter muAdapter = new HomeAdapter(getActivity(), muList);
+
                         LinearLayoutManager manager3 = new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false);
                         recyclerView2.setLayoutManager(manager3);
                         recyclerView2.setAdapter(muAdapter);
@@ -185,6 +185,7 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
     private void showAddProductDialog() {
         String id = generateID();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -324,5 +325,14 @@ public class HomeFragment extends Fragment {
                 e.printStackTrace();
             }
         }
+    }
+    @Override
+    public void onProductItemClick(Products product) {
+        ProductDetailFragment fragment = ProductDetailFragment.newInstance(product);
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 }
