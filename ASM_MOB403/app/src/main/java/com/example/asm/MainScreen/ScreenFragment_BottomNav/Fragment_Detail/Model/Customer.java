@@ -1,10 +1,15 @@
 package com.example.asm.MainScreen.ScreenFragment_BottomNav.Fragment_Detail.Model;
 
+import com.example.asm.MainScreen.ScreenFragment_BottomNav.Model.Products;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Customer {
     String id;
     String customername;
     int customerphone;
-
+    private List<Products> productsList = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -39,5 +44,11 @@ public class Customer {
     }
 
     public Customer() {
+    }
+    public List<Products> getProductList() {
+        return productsList;
+    }
+    public void setProductList(List<Products> productsList) {
+        this.productsList = productsList;
     }
 }
