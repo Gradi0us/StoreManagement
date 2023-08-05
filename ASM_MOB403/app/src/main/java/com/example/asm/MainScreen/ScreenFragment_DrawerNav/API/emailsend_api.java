@@ -32,5 +32,4 @@ public interface emailsend_api {
 
     );
 
-
 }

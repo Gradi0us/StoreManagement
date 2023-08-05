@@ -4,6 +4,8 @@ import com.example.asm.Login_Register.Model_User.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -23,4 +25,9 @@ public interface login_api {
                            @Field("username") String username,
                            @Field("password") String password
                            );
+    @FormUrlEncoded
+    @POST("API/api_getpass.php")
+    Call<List<User>> getpassword(@Field("id") String id
+    );
+
 }

@@ -19,7 +19,7 @@ import com.example.asm.MainScreen.ScreenFragment_BottomNav.API.findcustomerbyid_
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.API.findcustomerinpinpending_api;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.API.findproductbyid_api;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Adapter.Bill_Adapter;
-import com.example.asm.MainScreen.ScreenFragment_BottomNav.Fragment_Detail.Model.Bill;
+import com.example.asm.MainScreen.ScreenFragment_BottomNav.Model.Bill;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Fragment_Detail.Model.Customer;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Model.Products;
 import com.example.asm.R;

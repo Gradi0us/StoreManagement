@@ -1,6 +1,6 @@
 package com.example.asm.MainScreen.ScreenFragment_BottomNav.API;
 
-import com.example.asm.MainScreen.ScreenFragment_BottomNav.Fragment_Detail.Model.Bill;
+import com.example.asm.MainScreen.ScreenFragment_BottomNav.Model.Bill;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

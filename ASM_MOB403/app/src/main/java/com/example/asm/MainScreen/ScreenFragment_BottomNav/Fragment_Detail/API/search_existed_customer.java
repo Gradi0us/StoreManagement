@@ -18,15 +18,24 @@ import retrofit2.http.POST;
 public interface search_existed_customer {
     Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 
-   search_existed_customer api = new Retrofit.Builder()
+    search_existed_customer api = new Retrofit.Builder()
             .baseUrl("https://testh0stmysql.000webhostapp.com/")
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
-            .create(search_existed_customer .class);
+            .create(search_existed_customer.class);
 
     @FormUrlEncoded
     @POST("API/api_customerfind.php")
     Call<List<Customer>> getcustomerinfo(
             @Field("customerphone") int customerphone
     );
+
+    @FormUrlEncoded
+    @POST("API/api_findcustomerwithnameandphone.php")
+    Call<List<Customer>> getcustomerinfowithphoneandusername(
+            @Field("customername") String customername,
+            @Field("customerphone") int customerphone
+
+    );
+
 }

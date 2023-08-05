@@ -1,12 +1,8 @@
-package com.example.asm.MainScreen.ScreenFragment_BottomNav.Fragment_Detail.API;
+package com.example.asm.MainScreen.ScreenFragment_BottomNav.API;
 
-import com.example.asm.MainScreen.ScreenFragment_BottomNav.Fragment_Detail.Model.Bill;
-import com.example.asm.MainScreen.ScreenFragment_BottomNav.Fragment_Detail.Model.Customer;
+import com.example.asm.MainScreen.ScreenFragment_BottomNav.Model.Bill;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.type.DateTime;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -31,10 +27,10 @@ public interface addnew_bill {
             @Field("uid") String uid,
             @Field("pid") String pid,
             @Field("customerid") String customerid,
-            @Field("date")String date,
+            @Field("date") String date,
             @Field("totalcost") int totalcost,
             @Field("status") String status
 
 
-            );
+    );
 }

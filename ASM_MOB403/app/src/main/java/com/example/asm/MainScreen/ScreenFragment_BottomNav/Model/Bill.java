@@ -1,4 +1,4 @@
-package com.example.asm.MainScreen.ScreenFragment_BottomNav.Fragment_Detail.Model;
+package com.example.asm.MainScreen.ScreenFragment_BottomNav.Model;
 
 import com.google.type.DateTime;
 

@@ -7,8 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -16,11 +14,9 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,33 +25,28 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.asm.MainScreen.MainScreen;
-import com.example.asm.MainScreen.ScreenFragment_BottomNav.Fragment_Detail.API.addnew_bill;
+import com.example.asm.MainScreen.ScreenFragment_BottomNav.API.add_history;
+import com.example.asm.MainScreen.ScreenFragment_BottomNav.API.addnew_bill;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Fragment_Detail.API.addnew_customer;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Fragment_Detail.API.getitem_list_api;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Fragment_Detail.API.search_existed_customer;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Fragment_Detail.Adapter.Detail_Adapter;
-import com.example.asm.MainScreen.ScreenFragment_BottomNav.Fragment_Detail.Model.Bill;
+import com.example.asm.MainScreen.ScreenFragment_BottomNav.Model.Bill;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Fragment_Detail.Model.Customer;
+import com.example.asm.MainScreen.ScreenFragment_BottomNav.Model.History;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Model.Products;
 import com.example.asm.R;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.google.type.DateTime;
 
-import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 //import static com.example.asm.MainScreen.ScreenFragment_BottomNav.Fragment_Detail.Adapter.Detail_Adapter.productmount;
 public class ProductDetailFragment extends Fragment {
 
@@ -79,7 +70,7 @@ public class ProductDetailFragment extends Fragment {
     Detail_Adapter adapter;
     RecyclerView billcreate;
     LinearLayoutManager manager1;
-int productmountt,cost;
+    int productmountt, cost;
     TextView tottalcost;
 
     public static ProductDetailFragment newInstance(Products product) {
@@ -179,7 +170,7 @@ int productmountt,cost;
         TextView idnhanvien = dialogView.findViewById(R.id.idnhanvien);
         Button thanhtoan = dialogView.findViewById(R.id.thanhtoan);
         Button muatiep = dialogView.findViewById(R.id.muatiep);
-         tottalcost = dialogView.findViewById(R.id.totalcost);
+        tottalcost = dialogView.findViewById(R.id.totalcost);
         totalcost = productmountt * cost;
         tottalcost.setText(String.valueOf(totalcost));
         tottalcost.setText(String.valueOf(cost));
@@ -194,7 +185,6 @@ int productmountt,cost;
         idnhanvien.setText(uid);
         namecustomer.setVisibility(View.GONE);
         namecustomerEditText.setVisibility(View.GONE);
-
 
 
         phonecustoerEditText.addTextChangedListener(new TextWatcher() {
@@ -255,6 +245,57 @@ int productmountt,cost;
         thanhtoan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (customerid == null) {
+                    customername = namecustomerEditText.getText().toString().trim();
+                    addnew_customer.api.addnewcustomer(customerphone, customername, id).enqueue(new Callback<Customer>() {
+                        @Override
+                        public void onResponse(Call<Customer> call, Response<Customer> response) {
+                            if (response.isSuccessful()) {
+                                Customer customers = response.body();
+                                if (customers != null) {
+                                    Toast.makeText(getActivity(), "thêm khách hàng thành công", Toast.LENGTH_SHORT).show();
+                                    search_existed_customer.api.getcustomerinfowithphoneandusername(customername,customerphone).enqueue(new Callback<List<Customer>>() {
+                                        @Override
+                                        public void onResponse(Call<List<Customer>> call, Response<List<Customer>> response) {
+                                            if (response.isSuccessful()) {
+                                                List<Customer> customers = response.body();
+                                                if (customers != null && customers.size() > 0) {
+                                                    Customer customer = customers.get(0);
+
+                                                    String customerid = customer.getId();
+                                                    if(customerid != null ){
+                                                        add_history(id, uid, pid, date, customerid, productmountt, totalcost);
+                                                    }else{
+                                                        Toast.makeText(getActivity(), "customerid trống", Toast.LENGTH_SHORT).show();
+                                                    }
+
+                                                }else{
+                                                    Toast.makeText(getActivity(), "không có customer ", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<List<Customer>> call, Throwable t) {
+
+                                        }
+                                    });
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Customer> call, Throwable t) {
+                            Toast.makeText(getActivity(), "Lỗi" + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    if (pid != null && id != null && uid != null && date != null) {
+                        add_history(id, uid, pid, date, customerid, productmountt, totalcost);
+                    } else {
+                        Toast.makeText(getActivity(), "Dữ liệu trống", Toast.LENGTH_SHORT).show();
+                    }
+                }
 
             }
         });
@@ -262,15 +303,15 @@ int productmountt,cost;
         muatiep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(customerid == null){
+                if (customerid.equals("")) {
                     customername = namecustomerEditText.getText().toString().trim();
-                    if(customerphone != 0 && customername != null){
+                    if (customerphone != 0 && customername != null) {
                         addnew_customer(id, customerphone, customername);
                     }
 
-                }else{
+                } else {
                     id = generateID();
-                    addnewbill(id,uid,pid,customerid,date,totalcost,status);
+                    addnewbill(id, uid, pid, customerid, date, totalcost, status);
                 }
 
 
@@ -310,9 +351,9 @@ int productmountt,cost;
                     if (customers != null) {
                         Toast.makeText(getActivity(), "thêm khách hàng thành công", Toast.LENGTH_SHORT).show();
                         String customerid = customers.getId();
-                        if (customerid != null){
-                            addnewbill(id,uid,pid,customerid,date,totalcost,status);
-                        }else{
+                        if (customerid != null) {
+                            addnewbill(id, uid, pid, customerid, date, totalcost, status);
+                        } else {
                             Toast.makeText(getActivity(), "customerid null r", Toast.LENGTH_SHORT).show();
                         }
 
@@ -328,17 +369,17 @@ int productmountt,cost;
     }
 
     private void addnewbill(String id, String uid, String pid, String customerid, String date, int totalcost, String status) {
-        addnew_bill.api.addnewbill(id,uid,pid,customerid,date,totalcost,status).enqueue(new Callback<Bill>() {
+        addnew_bill.api.addnewbill(id, uid, pid, customerid, date, totalcost, status).enqueue(new Callback<Bill>() {
             @Override
             public void onResponse(Call<Bill> call, Response<Bill> response) {
-if (response.isSuccessful()){
-    Toast.makeText(getActivity(), "Thanhcong", Toast.LENGTH_SHORT).show();
-}
+                if (response.isSuccessful()) {
+                    Toast.makeText(getActivity(), "Thanhcong", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onFailure(Call<Bill> call, Throwable t) {
-                Toast.makeText(getActivity(), ""+t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "" + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -351,7 +392,7 @@ if (response.isSuccessful()){
                     Products product = response.body();
                     if (product != null) {
                         productList.add(product);
-                        manager1 = new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
+                        manager1 = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
                         billcreate.setLayoutManager(manager1);
                         billcreate.setAdapter(adapter);
                     }
@@ -365,11 +406,12 @@ if (response.isSuccessful()){
             }
         });
     }
+
     private BroadcastReceiver productMountBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals("PRODUCT_MOUNT_CHANGED")) {
-                int newProductMount = intent.getIntExtra("PRODUCT_MOUNT",1);
+                int newProductMount = intent.getIntExtra("PRODUCT_MOUNT", 1);
                 // Nhận dữ liệu số lượng sản phẩm mới từ BroadcastReceiver và xử lý
                 // Ví dụ:
                 productmountt = newProductMount; // Lưu giá trị vào biến của Fragment
@@ -378,12 +420,14 @@ if (response.isSuccessful()){
             }
         }
     };
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         // Hủy đăng ký BroadcastReceiver khi Fragment bị hủy
         getActivity().unregisterReceiver(productMountBroadcastReceiver);
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -391,4 +435,21 @@ if (response.isSuccessful()){
         IntentFilter intentFilter = new IntentFilter("PRODUCT_MOUNT_CHANGED");
         getActivity().registerReceiver(productMountBroadcastReceiver, intentFilter);
     }
+
+    private void add_history(String id, String uid, String pid, String date, String customerid, int mountbuy, int price) {
+        add_history.api.addnewhistory(id, uid, pid, date, customerid, mountbuy, price).enqueue(new Callback<List<History>>() {
+            @Override
+            public void onResponse(Call<List<History>> call, Response<List<History>> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getActivity(), "Thêm thành công", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<History>> call, Throwable t) {
+                Toast.makeText(getActivity(), "Lỗi Thêm lịch sử"+t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 }

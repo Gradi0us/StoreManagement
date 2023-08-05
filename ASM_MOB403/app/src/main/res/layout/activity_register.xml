@@ -15,66 +15,79 @@
         android:layout_marginTop="32dp"
         android:layout_marginBottom="32dp"/>
 
-    <EditText
-        android:id="@+id/editTextUsername"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/usernameInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Username"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+      android:hint="Username">
 
-    <EditText
-        android:id="@+id/editTextPassword"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextUsername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/passwordInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:hint="Password"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+       android:hint="Password">
 
-    <EditText
-        android:id="@+id/editTextQuests"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/questsInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Quests"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp" />
-<LinearLayout
-    android:gravity="center"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <View
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="0dp"/>
-    <Button
-        android:id="@+id/buttonRegister"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Register"
-        android:layout_gravity="center"
-        />
-    <View
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="0dp"/>
-    <Button
+        android:layout_marginTop="16dp"
+       android:hint="Quests">
 
-        android:id="@+id/buttontologin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Login"
-        android:layout_gravity="center"
-   />
-    <View
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="0dp"/>
-</LinearLayout>
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextQuests"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp">
+
+        <Button
+            android:id="@+id/buttonRegister"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Register"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center" />
+
+        <Button
+            android:id="@+id/buttontologin"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Login"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
 
 </LinearLayout>
