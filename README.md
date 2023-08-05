@@ -1,3 +1,3 @@
 # StoreManagement
-HEHE
-HOHO
+App quản lý / Bán hàng sử dụng MySQL & FireBase
+
