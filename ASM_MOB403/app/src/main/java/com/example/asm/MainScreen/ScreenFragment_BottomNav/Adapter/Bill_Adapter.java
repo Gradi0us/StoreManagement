@@ -11,14 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Fragment_Detail.Model.Customer;
-import com.example.asm.R; // Thay thế bằng đường dẫn đến file resources của bạn
+import com.example.asm.R;
 
 import java.util.List;
 
 public class Bill_Adapter extends RecyclerView.Adapter<Bill_Adapter.BillViewHolder> {
     private Context context;
     private List<Customer> customerList;
-    public int priceproduct;
 
 
     public Bill_Adapter(Context context, List<Customer> customerList) {
@@ -40,13 +39,14 @@ public class Bill_Adapter extends RecyclerView.Adapter<Bill_Adapter.BillViewHold
 
         holder.customerNameTextView.setText(customer.getCustomername());
 
+        ProductAdapter productAdapter = new ProductAdapter(context, customer.getProductList());
 
-        ProductAdapter productAdapter = new ProductAdapter(context, customer.getProductList()); // Thay vì customer.getProductList() là danh sách sản phẩm của khách hàng
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(context,RecyclerView.VERTICAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context, RecyclerView.VERTICAL, false);
         holder.item_product.setLayoutManager(layoutManager);
         holder.item_product.setAdapter(productAdapter);
-        productAdapter.notifyDataSetChanged();
+
+        // Set the listener for the ProductAdapter
+
 
         // Set other data as needed
 
@@ -62,14 +62,10 @@ public class Bill_Adapter extends RecyclerView.Adapter<Bill_Adapter.BillViewHold
         private TextView customerNameTextView;
         RecyclerView item_product;
 
-
         public BillViewHolder(@NonNull View itemView) {
             super(itemView);
             customerNameTextView = itemView.findViewById(R.id.customername);
             item_product = itemView.findViewById(R.id.item_product);
-
         }
     }
-
-
 }

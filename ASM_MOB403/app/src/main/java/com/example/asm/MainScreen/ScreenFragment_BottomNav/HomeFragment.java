@@ -181,7 +181,7 @@ public class HomeFragment extends Fragment implements OnProductItemClickListener
             @Override
             public void onFailure(Call<List<Products>> call, Throwable t) {
                 // Xử lý khi gặp lỗi
-                Toast.makeText(getActivity(), "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(getActivity(), "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

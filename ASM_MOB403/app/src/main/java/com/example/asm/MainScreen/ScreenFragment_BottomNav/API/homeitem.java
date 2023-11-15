@@ -17,7 +17,6 @@ import retrofit2.http.POST;
 
 public interface
     homeitem {
-
     @GET("API/api_homeitem.php")
     Call<List<Products>> getProducts();
 

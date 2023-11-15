@@ -14,22 +14,17 @@ import com.bumptech.glide.Glide;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Model.Products;
 import com.example.asm.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
     private Context context;
     private List<Products> productsList;
-    int priceperproduct;
-    private int priceproduct;
+
     public ProductAdapter(Context context, List<Products> productsList) {
         this.context = context;
-        if (productsList == null) {
-            this.productsList = new ArrayList<>(); // hoặc một danh sách rỗng tùy bạn
-        } else {
-            this.productsList = productsList;
-        }
+        this.productsList = productsList;
     }
+
 
 
     @NonNull
@@ -47,21 +42,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         holder.productTypeTextView.setText(products.getProducttype());
         Glide.with(holder.itemView.getContext())
                 .load(products.getProductimage())
-                .placeholder(R.drawable.ic_history) // Ảnh placeholder hiển thị khi chờ tải ảnh
-                .error(R.drawable.ic_history) // Ảnh hiển thị khi lỗi tải ảnh
+                .placeholder(R.drawable.ic_history)
+                .error(R.drawable.ic_history)
                 .into(holder.item_img_product);
         holder.productMountTextView.setText(String.valueOf(products.getPrice()));
-
     }
 
     @Override
     public int getItemCount() {
-        if (productsList == null) {
-            return 0; // hoặc trả về số phần tử mặc định
-        }
         return productsList.size();
     }
-
 
     public static class ProductViewHolder extends RecyclerView.ViewHolder {
         private TextView productNameTextView, productTypeTextView, productMountTextView;
@@ -73,8 +63,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             productTypeTextView = itemView.findViewById(R.id.item_type_product);
             productMountTextView = itemView.findViewById(R.id.item_product_mount);
             item_img_product = itemView.findViewById(R.id.item_img_product);
-
         }
     }
 }
-

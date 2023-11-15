@@ -2,12 +2,14 @@ package com.example.asm.MainScreen.ScreenFragment_BottomNav;
 
 import static android.service.controls.ControlsProviderService.TAG;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,14 +21,17 @@ import com.example.asm.MainScreen.ScreenFragment_BottomNav.API.findcustomerbyid_
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.API.findcustomerinpinpending_api;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.API.findproductbyid_api;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Adapter.Bill_Adapter;
+import com.example.asm.MainScreen.ScreenFragment_BottomNav.Adapter.ProductAdapter;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Model.Bill;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Fragment_Detail.Model.Customer;
 import com.example.asm.MainScreen.ScreenFragment_BottomNav.Model.Products;
 import com.example.asm.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import retrofit2.Call;
@@ -36,17 +41,17 @@ import retrofit2.Response;
 
 public class BillFragment extends Fragment {
     RecyclerView recyclerviewuser;
-    private List<Bill> billItemList = new ArrayList<>();
     private List<Customer> customerList = new ArrayList<>();
     private List<Products> productsList = new ArrayList<>();
-    private List<String> customerIds = new ArrayList<>();
     private Set<String> processedCustomerIds = new HashSet<>();
-
+    private Map<String, List<String>> customerProductMap = new HashMap<>();
+    private Handler handler = new Handler();
     MainScreen mainScreen;
-    String uid, pid, customerid, customername, productname, producttype, productimage;
-    public int productprice;
-
+    private ProgressDialog progressDialog;
+    String uid, pid, customerid;
     Bill_Adapter bill_adapter;
+    private boolean isLoading = false;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,10 +64,17 @@ public class BillFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_bill, container, false);
-        mainScreen= (MainScreen) getActivity();
+        mainScreen = (MainScreen) getActivity();
         uid = mainScreen.userId;
-        getbillfromiduser(uid);
         anhxa(v);
+
+
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        getbillfromiduser(uid);
+
 
         return v;
     }
@@ -80,32 +92,34 @@ public class BillFragment extends Fragment {
                     List<Bill> bills = response.body();
                     if (!bills.isEmpty()) {
                         for (Bill bill : bills) {
+                            customerid = bill.getCustomerid();
                             pid = bill.getPid();
                             if (pid != null) {
-                                productprice = bill.getTotalcost();
+                                if (!customerProductMap.containsKey(customerid)) {
+                                    customerProductMap.put(customerid, new ArrayList<>());
+                                }
+                                customerProductMap.get(customerid).add(pid);
                                 getproductbyid(pid);
                             } else {
                                 Toast.makeText(mainScreen, "pidnullnull", Toast.LENGTH_SHORT).show();
                             }
-                            customerid = bill.getCustomerid();
-                            if (customerid != null && !processedCustomerIds.contains(customerid)) {
-                                processedCustomerIds.add(customerid); // Thêm customerid vào tập hợp
+                            if (!processedCustomerIds.contains(customerid)) {
+                                processedCustomerIds.add(customerid);
                             }
                         }
-                        // Gọi hàm để truy vấn và lưu dữ liệu vào customerList
-                        queryAndLoadCustomerData();
                     }
+                    // Move the call to queryAndLoadCustomerData here
+                    queryAndLoadCustomerData();
                 }
             }
 
             @Override
             public void onFailure(Call<List<Bill>> call, Throwable t) {
                 Toast.makeText(mainScreen, "Lỗi getbillfromuid" + t.getMessage(), Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "onFailure: "+t.getMessage());
+                Log.d(TAG, "onFailure: " + t.getMessage());
             }
         });
     }
-
 
 
     private void queryAndLoadCustomerData() {
@@ -116,25 +130,25 @@ public class BillFragment extends Fragment {
                     if (response.isSuccessful()) {
                         List<Customer> fetchedCustomerList = response.body();
                         if (fetchedCustomerList != null && !fetchedCustomerList.isEmpty()) {
-                            Customer customer = fetchedCustomerList.get(0); // Lấy đối tượng đầu tiên từ danh sách
+                            Customer customer = fetchedCustomerList.get(0);
+                            customer.getProductList().clear();
+                            List<String> associatedPids = customerProductMap.get(customer.getId());
+                            if (associatedPids != null && !associatedPids.isEmpty()) {
+                                for (String pid : associatedPids) {
+                                    for (Products product : productsList) {
+                                        if (product.getId().equals(pid)) {
+                                            customer.getProductList().add(product);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
                             if (!customerList.contains(customer)) {
                                 customerList.add(customer);
                             }
-                            customer.setProductList(productsList);
-                            if (!customerList.contains(customer)) {
-                                customerList.add(customer);
-                            }
-
-                            // Kiểm tra xem đã lấy hết dữ liệu hay chưa
                             if (customerList.size() == processedCustomerIds.size()) {
-                                // Đã lấy hết dữ liệu, cập nhật adapter
-                                bill_adapter = new Bill_Adapter(getActivity(), customerList);
-                                LinearLayoutManager manager1 = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
-                                recyclerviewuser.setLayoutManager(manager1);
-                                recyclerviewuser.setAdapter(bill_adapter);
-
-                                // Gọi hàm lấy thông tin sản phẩm
-
+                                // Move the call to checkLoadingState here
+                                checkLoadingState();
                             }
                         }
                     }
@@ -149,31 +163,47 @@ public class BillFragment extends Fragment {
     }
 
 
-
-
     private void getproductbyid(String id) {
         findproductbyid_api.api.getproductbyid(id).enqueue(new Callback<List<Products>>() {
             @Override
             public void onResponse(Call<List<Products>> call, Response<List<Products>> response) {
+                isLoading = false;
                 if (response.isSuccessful()) {
                     List<Products> productList = response.body();
                     if (productList != null && !productList.isEmpty()) {
+                        // Cập nhật dữ liệu vào productsList
                         productsList.addAll(productList);
 
                         if (customerList.size() == processedCustomerIds.size()) {
-                            bill_adapter.notifyDataSetChanged();
+                            checkLoadingState();
+                        } else {
+                            Toast.makeText(mainScreen, "productidnull", Toast.LENGTH_SHORT).show();
                         }
-                    } else {
-                        Toast.makeText(mainScreen, "productidnull", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<List<Products>> call, Throwable t) {
+                isLoading = false;
                 Toast.makeText(mainScreen, "Lỗi getproductbyid" + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+    private void checkLoadingState() {
+        if (!isLoading) {
+            // Đã tải xong dữ liệu, hiển thị danh sách
+            if (progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+
+            bill_adapter = new Bill_Adapter(getActivity(), customerList);
+            LinearLayoutManager manager1 = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
+            recyclerviewuser.setLayoutManager(manager1);
+            recyclerviewuser.setAdapter(bill_adapter);
+        }
+    }
+
 
 }

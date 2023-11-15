@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.example.asm.Login_Register.API.login_api;
@@ -33,6 +34,7 @@ public class login extends AppCompatActivity {
     private TextView tvScreenName;
     public String userId;
     ImageView imgacc;
+    Toolbar toolbar;
     String nameacc,imglink,Password;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
